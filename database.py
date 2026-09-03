@@ -1,12 +1,12 @@
 import datetime as dt
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine, create_engine
 from sqlalchemy.orm import declarative_base, Session, sessionmaker
 
 DATABASE_URL = "sqlite:///./appointments_db.db"
 
-create_engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=create_engine)
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base() 
 
@@ -22,6 +22,6 @@ class Appointment(Base):
 
 
 def init_db():
-    Base.metadata.create_all(bind=create_engine)
+    Base.metadata.create_all(bind=engine)
 
 init_db()
