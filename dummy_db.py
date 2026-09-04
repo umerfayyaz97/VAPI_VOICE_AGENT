@@ -9,7 +9,6 @@ def run_sql(query: str):
     Example: 
         rows = run_sql("SELECT * FROM appointments")
         print(rows)  
-    
     """
     with engine.begin() as conn:
         result  = conn.execute(text(query))

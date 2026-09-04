@@ -1,7 +1,7 @@
 import datetime as dt
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine, create_engine
-from sqlalchemy.orm import declarative_base, Session, sessionmaker
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = "sqlite:///./appointments_db.db"
 
@@ -16,9 +16,9 @@ class Appointment(Base):
     id = Column(Integer, primary_key=True, index=True)
     patient_name = Column(String, index=True)
     reason = Column(String, index=True)
-    start_time = Column(DateTime, default=dt.datetime.utcnow)
+    start_time = Column(DateTime, default=dt.datetime.now)
     cancelled = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=dt.datetime.utcnow)
+    created_at = Column(DateTime, default=dt.datetime.now)
 
 
 def init_db():
