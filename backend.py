@@ -66,11 +66,11 @@ def schedule_appointment(request: AppointmentRequest, db: Session = Depends(get_
 
 #cancel_appt
 from sqlalchemy import select
-@app.put("/cancel_appointments/")
+@app.post("/cancel_appointments/")
 def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(get_db)):
 
     start_dt = dt.datetime.combine(request.date, dt.time.min)
-    end_dt = dt.datetime.combine(request.date, dt.time.max)
+    end_dt = start_dt + dt.timedelta(days=1)
 
     result = db.execute(
     select(Appointment)
@@ -81,19 +81,54 @@ def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(
     )
 
     appointments = result.scalars().all()
+    #if no appointments found for the given patient and date, raise an HTTPException with status code 404 and a detail message
     if not appointments:
         raise HTTPException(status_code=404, detail="No appointments found for the given patient and date.")
     
-    
+    #if appointments are found, iterate through the list of appointments and set the cancelled attribute to True for each appointment. Then commit the changes to the database and return a CancelAppointmentResponse with the count of cancelled appointments.
+    for appointment in appointments:
+         appointment.cancelled = True
 
-    #logic to cancel appointment
-    return
+    db.commit()
+
+   
+    return CancelAppointmentResponse(cancelled_count=len(appointments))
 
 #list_appt
-@app.get("/list_appointments/")
-def list_appointments():
-    #logic to get appointments
-    return
+@app.post("/list_appointments/")
+def list_appointments(request: AppointmentRequest, db : Session = Depends(get_db)):
+
+    start_dt = dt.datetime.combine(request.start_time, dt.time.min)
+    end_dt = start_dt + dt.timedelta(days=1)
+
+    result = db.execute(
+    select(Appointment)
+    .where(Appointment.patient_name == request.patient_name)
+    .where(Appointment.cancelled == False)
+    .where(Appointment.start_time >= start_dt)        
+    .where(Appointment.start_time < end_dt)
+    .order_by(Appointment.start_time.asc())
+
+    )
+
+    booked_appointment = []
+    for appointment in result:
+        appointment_obj = AppointmentResponse(
+        id=appointment.id,
+        patient_name=appointment.patient_name,
+        reason=appointment.reason,
+        start_time=appointment.start_time,
+        cancelled=appointment.cancelled,
+        created_at=appointment.created_at
+     ) 
+        booked_appointment.append(appointment_obj)
+    
+    return booked_appointment
+
+import uvicorn
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("backend:app", host="127.0.0.1", port=8000, reload=True)
 
 
 

@@ -24,4 +24,11 @@ class Appointment(Base):
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-init_db()
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# init_db()
