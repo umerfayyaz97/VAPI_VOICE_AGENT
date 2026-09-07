@@ -29,7 +29,7 @@ class CancelAppointmentRequest(BaseModel):
     patient_name: str
     date: dt.datetime
 
-class cancelAppointmentResponse(BaseModel):
+class CancelAppointmentResponse(BaseModel):
     cancelled_count: int
 
 #step2: cretae FASTAPI app endpoints pseudo code
@@ -40,7 +40,13 @@ app = FastAPI()
 
 #schedule_appt
 @app.post("/schedule_appointments/")
-def schedule_appointment(appointment: AppointmentRequest):
+def schedule_appointment(request: AppointmentRequest):
+    new_appointment = Appointment(
+         patient_name = request.patient_name,
+            reason = request.reason,
+            start_time = request.start_time
+    )
+    
     #logic to schedule appointment
     return
 
