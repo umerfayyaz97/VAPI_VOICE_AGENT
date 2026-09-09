@@ -96,14 +96,13 @@ def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(
 
 #list_appt
 @app.get("/list_appointments/")
-def list_appointments(request: AppointmentRequest, db : Session = Depends(get_db)):
+def list_appointments(date: dt.date, db : Session = Depends(get_db)):
 
-    start_dt = dt.datetime.combine(request.start_time, dt.time.min)
+    start_dt = dt.datetime.combine(date , dt.time.min)
     end_dt = start_dt + dt.timedelta(days=1)
 
     result = db.execute(
     select(Appointment)
-    .where(Appointment.patient_name == request.patient_name)
     .where(Appointment.cancelled == False)
     .where(Appointment.start_time >= start_dt)        
     .where(Appointment.start_time < end_dt)
@@ -112,7 +111,7 @@ def list_appointments(request: AppointmentRequest, db : Session = Depends(get_db
     )
 
     booked_appointment = []
-    for appointment in result:
+    for appointment in result.scalars():
         appointment_obj = AppointmentResponse(
         id=appointment.id,
         patient_name=appointment.patient_name,
@@ -125,7 +124,7 @@ def list_appointments(request: AppointmentRequest, db : Session = Depends(get_db
     
     return booked_appointment
 
-import uvicorn
+import uvicorn  
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend:app", host="127.0.0.1", port=8000, reload=True)
