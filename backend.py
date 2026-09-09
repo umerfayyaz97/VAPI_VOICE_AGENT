@@ -95,7 +95,7 @@ def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(
     return CancelAppointmentResponse(cancelled_count=len(appointments))
 
 #list_appt
-@app.post("/list_appointments/")
+@app.get("/list_appointments/")
 def list_appointments(request: AppointmentRequest, db : Session = Depends(get_db)):
 
     start_dt = dt.datetime.combine(request.start_time, dt.time.min)
