@@ -1,7 +1,7 @@
 #step1: import database objects
 
 from sqlalchemy import Column
-
+from fastapi import Depends
 from sqlalchemy import Integer
 
 from database import init_db, Appointment, get_db # to put data in appointment class and to call database function to create tables if not exist
@@ -32,6 +32,9 @@ class CancelAppointmentRequest(BaseModel):
 
 class CancelAppointmentResponse(BaseModel):
     cancelled_count: int
+
+class ListAppointmentsRequest(BaseModel):
+    date: dt.datetime
 
 #step2: cretae FASTAPI app endpoints pseudo code
 
@@ -96,9 +99,9 @@ def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(
 
 #list_appt
 @app.get("/list_appointments/")
-def list_appointments(date: dt.date, db : Session = Depends(get_db)):
+def list_appointments(request: ListAppointmentsRequest = Depends(), db : Session = Depends(get_db)):
 
-    start_dt = dt.datetime.combine(date , dt.time.min)
+    start_dt = dt.datetime.combine(request.date , dt.time.min)
     end_dt = start_dt + dt.timedelta(days=1)
 
     result = db.execute(
