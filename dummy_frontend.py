@@ -71,10 +71,13 @@ with st.container(border=True):
         submit_fetch = st.form_submit_button("Fetch Bookings")
         
         if submit_fetch:
-            params = {"date": fetch_date.isoformat()}
+            # Name it payload to be clear it's going into the body
+            payload = {"date": fetch_date.isoformat()}
             
             try:
-                response = requests.get(f"{BASE_URL}/list_appointments/", params=params)
+                # Use json=payload instead of params=params
+                response = requests.post(f"{BASE_URL}/list_appointments/", json=payload)
+                
                 if response.status_code == 200:
                     appointments = response.json()
                     if appointments:
@@ -96,7 +99,7 @@ with st.container(border=True):
                 st.error(f"Failed to connect to backend at {BASE_URL}. Is it running?")
             except Exception as e:
                 st.error(f"An error occurred: {e}")
-
+                
 # ==========================================
 # SECTION 3: CANCEL APPOINTMENT
 # ==========================================
