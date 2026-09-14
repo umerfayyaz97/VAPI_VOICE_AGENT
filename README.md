@@ -8,14 +8,15 @@ Users simply speak to the AI (via phone or web widget) to check availability, sc
 
 - **Voice AI Agent:** [Vapi](https://vapi.ai/) (LLM-driven voice synthesis and intent parsing)
 - **Backend Framework:** FastAPI (Python)
+- **Frontend Dashboard:** Streamlit (For API testing and data visualization)
 - **Data Validation:** Pydantic
 - **Database & ORM:** SQLite (Ephemeral for demo purposes) & SQLAlchemy
 - **Package Management:** `uv`
-- **Deployment:** Hosted on Render.com
+- **Deployment:** Hosted on Render.com (Backend) and Streamlit Community Cloud (Frontend)
 
 ## ⚙️ How It Works
 
-This application is strictly **API-first**. There is no frontend web app.
+This application is strictly **API-first**. There is no frontend web app for regular users.
 
 1. The user speaks their request to the Vapi agent.
 2. Vapi parses the date, time, and intent from the conversation.
@@ -74,6 +75,18 @@ All endpoints are configured as `POST` requests to natively support the JSON pay
 
 ---
 
+## 🖥️ Streamlit Testing Dashboard
+
+While the core application is voice-native, this repository includes a **Streamlit frontend (`frontend.py`)** designed strictly for testing and debugging the backend API.
+
+**Features of the Test Dashboard:**
+
+- **Dynamic Endpoint Targeting:** Use the sidebar to point the frontend to a local server (`http://127.0.0.1:8000`) or a deployed cloud backend.
+- **Visual Data Verification:** Instantly see scheduled appointments rendered in a Pandas DataFrame without needing to query the database directly.
+- **Payload Construction:** Automatically handles datetime formatting and JSON payload construction to simulate exactly what the Vapi agent sends.
+
+---
+
 ## 💻 Local Development Setup
 
 To run this project locally, you will need Python installed. This project uses `uv` for fast dependency management.
@@ -82,14 +95,38 @@ To run this project locally, you will need Python installed. This project uses `
 
    ```bash
    git clone [https://github.com/umerfayyaz97/VAPI_VOICE_AGENT](https://github.com/umerfayyaz97/VAPI_VOICE_AGENT)
-   cd voice-appointment-scheduler
-
+   cd VAPI_VOICE_AGENT
    ```
 
-2. uv pip install -r requirements.txt
+2. **Install dependencies using uv:**
 
-3. uvicorn backend:app --reload
+   ```bash
+   uv pip install -r requirements.txt
+   ```
 
-The server will start at http://127.0.0.1:8000. You can view the interactive API documentation (Swagger UI) at http://127.0.0.1:8000/docs.
+3. **Run the FastAPI server (Backend):**
 
-Note: This is a backend, you need to expose endpoints and connect them to your VAPI via Tools.
+   ```bash
+   uvicorn backend:app --reload
+   ```
+
+   _The server will start at `http://127.0.0.1:8000`. You can view the interactive API documentation (Swagger UI) at `http://127.0.0.1:8000/docs`._
+
+4. **Run the Streamlit Dashboard (Frontend):**
+   Open a second terminal window and run:
+   ```bash
+   streamlit run frontend.py
+   ```
+
+> **Note:** This is a backend system. To integrate the voice agent locally, you must expose your local endpoints (e.g., using `ngrok`) and connect those public URLs to your Vapi Assistant via Custom Tools.
+
+## ☁️ Deployment Notes
+
+This backend is designed to be easily deployed on cloud platforms like Render or AWS App Runner.
+
+- Ensure the Vapi Dashboard tools are updated with your live production URL.
+- **Database Warning:** The current SQLite implementation is designed for demo environments. Cloud servers with ephemeral file systems (like Render's free tier) will wipe the database upon restarting. For permanent production use, swap the `DATABASE_URL` string to a managed PostgreSQL instance.
+
+```
+
+```
