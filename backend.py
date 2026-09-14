@@ -28,7 +28,7 @@ class AppointmentResponse(BaseModel):
 
 class CancelAppointmentRequest(BaseModel):
     patient_name: str
-    date: dt.datetime
+    date: dt.date
 
 class CancelAppointmentResponse(BaseModel):
     cancelled_count: int
