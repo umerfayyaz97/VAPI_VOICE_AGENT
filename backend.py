@@ -42,21 +42,6 @@ from fastapi import FastAPI, HTTPException, Depends
 
 app = FastAPI()
 
-
-# from fastapi.exceptions import RequestValidationError
-# from fastapi.responses import JSONResponse
-# from fastapi import Request
-
-# @app.exception_handler(RequestValidationError)
-# async def validation_exception_handler(request: Request, exc: RequestValidationError):
-#     # This will print the exact JSON Vapi sent and the exact error!
-#     body = await request.body()
-#     print(f"\n--- 422 ERROR DEBUGGER ---")
-#     print(f"VAPI SENT THIS: {body.decode()}")
-#     print(f"PYDANTIC ERROR: {exc.errors()}")
-#     print(f"--------------------------\n")
-#     return JSONResponse(status_code=422, content={"detail": exc.errors()})
-
 #schedule_appt
 @app.post("/schedule_appointments/")
 def schedule_appointment(request: AppointmentRequest, db: Session = Depends(get_db)):
